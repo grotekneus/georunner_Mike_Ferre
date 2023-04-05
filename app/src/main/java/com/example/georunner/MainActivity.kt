@@ -26,10 +26,19 @@ class MainActivity : AppCompatActivity() {
                 }
             login()
         }
+
+        binding.sighnUpButton.setOnClickListener{
+            createAccount()
+        }
     }
     private fun login(){
         Snackbar.make(binding.root, "login werkt", Snackbar.LENGTH_LONG).setAction("Action", null).show()
         val intent = Intent(this,HomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun createAccount(){
+        val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
 }
