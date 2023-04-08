@@ -1,12 +1,20 @@
 package com.example.georunner
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityMainBinding
+import android.content.Intent
+import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 
+
 class MainActivity : AppCompatActivity() {
+    
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,4 +49,8 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
+
+    
+    }
 }
+
