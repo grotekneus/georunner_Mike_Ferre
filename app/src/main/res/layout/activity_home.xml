@@ -5,12 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout"
-    tools:context=".MainActivity">
+    tools:context=".HomeActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/frmTodoContainer" />
+        android:id="@+id/frmTodoContainer" >
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="this is home" />
+    </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"

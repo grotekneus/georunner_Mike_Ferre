@@ -9,7 +9,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
-import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -48,9 +47,6 @@ class MainActivity : AppCompatActivity() {
     private fun createAccount(){
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
-    }
-
-    
     }
 }
 
