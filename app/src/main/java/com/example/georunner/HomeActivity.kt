@@ -14,15 +14,9 @@ class HomeActivity : AppCompatActivity() {
 
         binding = ActivityHomeBinding.inflate((layoutInflater))
         setContentView(binding.root)
-<<<<<<< HEAD
-        
-        
-      fun setupMenuDrawer() {
-=======
         setupMenuDrawer()
     }
     private fun setupMenuDrawer() {
->>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
         menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayout, R.string.menu_open, R.string.menu_close)
         binding.drawerLayout.addDrawerListener(menuBarToggle)
         menuBarToggle.syncState()
