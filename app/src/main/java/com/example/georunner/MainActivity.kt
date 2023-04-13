@@ -67,10 +67,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
-<<<<<<< HEAD
 
-    
-=======
->>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 }
 
