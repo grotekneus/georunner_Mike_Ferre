@@ -1,6 +1,7 @@
 package com.example.georunner
 
 import android.os.Bundle
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityHomeBinding
 
@@ -14,7 +15,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         
-    private fun setupMenuDrawer() {
+      fun setupMenuDrawer() {
         menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayout, R.string.menu_open, R.string.menu_close)
         binding.drawerLayout.addDrawerListener(menuBarToggle)
         menuBarToggle.syncState()

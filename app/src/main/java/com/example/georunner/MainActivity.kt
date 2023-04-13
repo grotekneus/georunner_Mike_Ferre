@@ -1,7 +1,6 @@
 package com.example.georunner
 
 
-import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -10,18 +9,31 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
 import android.os.Bundle
+import com.example.georunner.room.UserDatabase
+import com.example.georunner.room.UserRoomRepository
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
+    private lateinit var userRoomRepository: UserRoomRepository
+    private lateinit var main: MainActivity
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
+
         setContentView(binding.root)
+        //main = activity as MainActivity
+
+        userRoomRepository = UserRoomRepository(main.applicationContext)
+        //val userDao=UserRoomRepository().userDao
         binding.loginButton.setOnClickListener {
                 //var textMessage = "nice job dude"
                 if(binding.userNameTxt.text.toString()==""){
@@ -33,6 +45,9 @@ class MainActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
             login()
+            //GlobalScope.launch(Dispatchers.IO){
+
+            //}
         }
 
         binding.sighnUpButton.setOnClickListener{
@@ -51,6 +66,5 @@ class MainActivity : AppCompatActivity() {
     }
 
     
-    }
 }
 

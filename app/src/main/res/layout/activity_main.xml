@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawerLayout"
     tools:context=".MainActivity">
 
     <Button
@@ -22,8 +21,8 @@
 
     <EditText
         android:id="@+id/userNameTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="243dp"
+        android:layout_height="43dp"
         android:layout_marginBottom="44dp"
         android:ems="10"
         android:inputType="textPersonName"
@@ -37,6 +36,7 @@
 
     <TextView
         android:id="@+id/loginTxt"
+        android:contentDescription="Enter Your Username"
         android:layout_width="128dp"
         android:layout_height="50dp"
         android:text="Login"
@@ -51,8 +51,9 @@
 
     <EditText
         android:id="@+id/loginPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:contentDescription="Enter Your Username"
+        android:layout_width="233dp"
+        android:layout_height="53dp"
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
