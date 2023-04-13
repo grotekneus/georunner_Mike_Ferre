@@ -8,9 +8,12 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
+<<<<<<< HEAD
 import android.os.Bundle
 import com.example.georunner.room.UserDatabase
 import com.example.georunner.room.UserRoomRepository
+=======
+>>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -64,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
+<<<<<<< HEAD
 
     
+=======
+>>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 }
 

@@ -51,17 +51,24 @@
 
     <EditText
         android:id="@+id/loginPassword"
+<<<<<<< HEAD
         android:contentDescription="Enter Your Username"
         android:layout_width="233dp"
         android:layout_height="53dp"
+=======
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+>>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintTop_toTopOf="parent" />
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.498" />
 
     <TextView
         android:id="@+id/welcomeTxt"
@@ -101,4 +108,3 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.809" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-
