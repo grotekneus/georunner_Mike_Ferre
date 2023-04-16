@@ -10,6 +10,7 @@ import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
 //<<<<<<< HEAD
 import android.os.Bundle
+import com.example.georunner.room.User
 import com.example.georunner.room.UserDatabase
 import com.example.georunner.room.UserRoomRepository
 //=======
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.make(binding.root, "please enter a password", Snackbar.LENGTH_LONG).setAction("Action", null).show()
                     return@setOnClickListener
                 }
-            login()
+            verifyPassword()
             //GlobalScope.launch(Dispatchers.IO){
 
             //}
@@ -62,8 +65,13 @@ class MainActivity : AppCompatActivity() {
         binding.sighnUpButton.setOnClickListener{
             createAccount()
         }
+
+        binding.MikeButton.setOnClickListener {
+            val intent = Intent(this,MikeActivity::class.java)
+            startActivity(intent)
+        }
     }
-    private fun login(){
+    private fun verifyPassword(){
 
         val userDao = userRoomRepository.userDao
         val username = binding.userNameTxt.text.toString()
@@ -71,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             val user = userDao.getUserByUsername(username)
             if(user.password==password){
-                login2()
+                login(user)
             }
             else{
                 return@launch
@@ -84,8 +92,9 @@ class MainActivity : AppCompatActivity() {
         //startActivity(intent)
     }
 
-    private fun login2(){
-        val intent = Intent(this,HomeActivity::class.java)
+    private fun login(user: User){
+        val intent = Intent(this,MikeActivity::class.java)
+        intent.putExtra("USER_OBJECT", user)
         startActivity(intent)
     }
 
@@ -93,10 +102,5 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
-//<<<<<<< HEAD
-
-    
-//=======
-//>>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 }
 

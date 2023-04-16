@@ -11,6 +11,9 @@ class UserRoomRepository(appContext: Context){
 
     val userDao = db.userDao()
     val users: List<User> = userDao.getAll()
+    suspend fun updateScore(user: User) {
+        userDao.updateUser(user)
+    }
 
     //fun getAllUsers(): List<User> {
       //  return userDao.getAll()

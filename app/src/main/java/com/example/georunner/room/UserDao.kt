@@ -13,6 +13,9 @@ interface UserDao {
     @Update
     fun update(items: List<User>)
 
+    @Update
+    fun updateUser(user: User)
+
     @Query("DELETE FROM User")
     fun deleteAll()
 

@@ -18,6 +18,8 @@
         <activity android:name=".MapActivity" android:exported="true" />
         <activity android:name =".HomeActivity" android:exported = "true" />
         <activity android:name =".CreateAccountActivity" android:exported = "true" />
+        <activity android:name =".MikeActivity" android:exported = "true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
