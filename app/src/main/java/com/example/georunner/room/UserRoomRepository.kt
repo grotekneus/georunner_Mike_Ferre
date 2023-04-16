@@ -12,6 +12,14 @@ class UserRoomRepository(appContext: Context){
     val userDao = db.userDao()
     val users: List<User> = userDao.getAll()
 
+    //fun getAllUsers(): List<User> {
+      //  return userDao.getAll()
+    //}
+
+    //fun insertUser(user: User) {
+      //  userDao.insert(user)
+    //}
+
 
 }
 

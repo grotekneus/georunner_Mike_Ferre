@@ -11,8 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frmTodoContainer" >
-<<<<<<< HEAD
-=======
 
         <TextView
             android:id="@+id/textView4"
@@ -20,16 +18,14 @@
             android:layout_height="match_parent"
             android:text="this is home" />
     </FrameLayout>
->>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navView"
-            android:layout_width="237dp"
-            android:layout_height="763dp"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header"
-            app:menu="@menu/nav_menu" />
-    </FrameLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
