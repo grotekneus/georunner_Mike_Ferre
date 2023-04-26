@@ -8,5 +8,8 @@ import kotlinx.serialization.Serializable
 @Entity
 data class User(
     @ColumnInfo(name = "password") val password: String,
-    @PrimaryKey(autoGenerate = false) var userName: String = "") : java.io.Serializable
+    @ColumnInfo(name = "userName") val userName: String,
+    @ColumnInfo(name = "score", defaultValue = "0") var score: Int = 0,
+    @PrimaryKey(autoGenerate = true) var id: Int = 0) : java.io.Serializable
+
 
