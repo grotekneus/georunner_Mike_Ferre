@@ -38,10 +38,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         //main = activity as MainActivity
 
-       // userRoomRepository = UserRoomRepository(main.applicationContext)
-        //val userDao=UserRoomRepository().userDao
-        //val userDatabase = UserDatabase.getDatabase(applicationContext)
-        //val userRoomRepository = UserRoomRepository(applicationContext)
         GlobalScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
@@ -93,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun login(user: User){
-        val intent = Intent(this,MikeActivity::class.java)
+        val intent = Intent(this,HomeActivity::class.java)
         intent.putExtra("USER_OBJECT", user)
         startActivity(intent)
     }
