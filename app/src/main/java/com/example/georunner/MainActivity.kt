@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun login(user: User){
-        val intent = Intent(this,HomeActivity::class.java)
+        val intent = Intent(this,MapActivity::class.java)
         intent.putExtra("USER_OBJECT", user)
         startActivity(intent)
     }
