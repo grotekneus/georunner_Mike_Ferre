@@ -30,9 +30,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         locationManager= getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f)
-        map.animateCamera(cameraUpdate)
         var mapFragment = supportFragmentManager.findFragmentById(R.id.maps) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
