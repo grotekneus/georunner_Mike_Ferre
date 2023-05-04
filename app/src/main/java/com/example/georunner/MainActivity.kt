@@ -99,5 +99,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,CreateAccountActivity::class.java)
         startActivity(intent)
     }
+
 }
 
