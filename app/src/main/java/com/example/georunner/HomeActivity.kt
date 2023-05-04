@@ -5,12 +5,25 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityHomeBinding
+import com.example.georunner.room.User
+import com.example.georunner.room.UserRoomRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var menuBarToggle: ActionBarDrawerToggle
+    val user = intent.getSerializableExtra("USER_OBJECT") as User
+    private lateinit var userRoomRepository: UserRoomRepository
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            userRoomRepository = UserRoomRepository(applicationContext)
+        }
 
         binding = ActivityHomeBinding.inflate((layoutInflater))
         setContentView(binding.root)
@@ -32,6 +45,7 @@ class HomeActivity : AppCompatActivity() {
     }
     private fun switchToMap(){
         val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra("USER_OBJECT", user)
         startActivity(intent)
 
     }

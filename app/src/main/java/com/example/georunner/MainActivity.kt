@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 login(user)
             }
             else{
+                Snackbar.make(binding.root, "password incorrect", Snackbar.LENGTH_LONG).setAction("Action", null).show()
                 return@launch
             }
             // use the user object as needed
