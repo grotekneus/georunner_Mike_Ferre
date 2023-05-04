@@ -45,14 +45,15 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0f, locationListener)
             map.isMyLocationEnabled = true
+
         } else {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf<String>(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    //Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
                 REQUEST_LOCATION_PERMISSION
             )
