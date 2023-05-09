@@ -27,6 +27,18 @@
         app:layout_constraintEnd_toStartOf="@+id/btnSearch"
         app:layout_constraintStart_toStartOf="parent"
         />
+    <TextView
+        android:id="@+id/timeTxt"
+        android:contentDescription="Time"
+        android:layout_width="128dp"
+        android:layout_height="50dp"
+        android:text="time"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        app:layout_constraintHorizontal_bias="0.433"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.23" />
 
     <Button
         android:id="@+id/btnSearch"
