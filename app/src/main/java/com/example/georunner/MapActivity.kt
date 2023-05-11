@@ -37,11 +37,13 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val sFrag = SearchFragment()
 
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.search_container, sFrag)
+            commit()
+        }
         mapFragment = supportFragmentManager.findFragmentById(R.id.maps) as SupportMapFragment
-
-
-
         mapFragment?.getMapAsync(this)
 
     }
@@ -49,8 +51,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
-
         checkPermissions()
 
     }
@@ -58,8 +58,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-
-
             map.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(
