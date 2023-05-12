@@ -17,5 +17,12 @@
         android:layout_below="@id/textViewTitle"
         android:padding="16dp"
         android:text="This is some other random information that you can display on the screen." />
+    <TextView
+        android:id="@+id/textViewContent2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewContent"
+        android:padding="16dp"
+        android:text="This is some other random information that you can display on the screen." />
 
 </RelativeLayout>

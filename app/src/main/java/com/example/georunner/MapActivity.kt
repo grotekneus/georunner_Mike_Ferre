@@ -5,31 +5,26 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-
-import android.location.LocationRequest
 import android.os.Bundle
-import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.georunner.databinding.ActivityMapBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import java.util.concurrent.Executors
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 
-class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
+class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.LocationListener {
     private lateinit var binding: ActivityMapBinding
     private lateinit var map: GoogleMap
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var mapFragment : SupportMapFragment
-
+    private lateinit var locationManager: LocationManager
+    lateinit var currentlocation : Location
 
 
     @Override
@@ -37,7 +32,10 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val sFrag = SearchFragment()
+        val sFrag = SearchFragment(this)
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        // Request location updates
+
 
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.search_container, sFrag)
@@ -59,6 +57,8 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
                 == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             map.isMyLocationEnabled = true
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
+            currentlocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -69,6 +69,16 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
                 REQUEST_LOCATION_PERMISSION
             )
 
+        }
+    }
+    fun placeMarker(latLng: LatLng){
+        if(map != null) {
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title("Destination")
+            )
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -86,10 +96,10 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
     override fun onLocationChanged(location: Location) {
     }
 
-    fun onProviderDisabled(provider: String) {}
+    override fun onProviderDisabled(provider: String) {}
 
-    fun onProviderEnabled(provider: String) {}
+    override fun onProviderEnabled(provider: String) {}
 
-    fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
 
 }
