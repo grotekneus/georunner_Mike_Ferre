@@ -17,6 +17,9 @@ class MikeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMikeBinding
     private lateinit var userRoomRepository: UserRoomRepository
 
+    private var startTime: Int = 0
+,   private var startDistance: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val user = intent.getSerializableExtra("USER_OBJECT") as User
@@ -52,12 +55,29 @@ class MikeActivity : AppCompatActivity() {
         }
     }
 
+    fun setStartTime(startTime: Int){
+        this.startTime=startTime
+    }
 
-    fun calculateScore(time:Int): Int {
+    fun setStartDistance(startDistance: Int){
+        this.startDistance=startDistance
+    }
+
+    fun
+
+
+    fun calculateScoreTime(time:Int): Int {
         var score = 0
-        score +=time*2
+        score = time*2
+
         return score
         //addScore(user, score)
+    }
+
+    fun calculateScoreDistance(distance:Int): Int{
+        var score=0
+        score += distance
+        return score
     }
     fun addScore(user:User,score:Int){
         GlobalScope.launch(Dispatchers.IO) {
@@ -70,13 +90,13 @@ class MikeActivity : AppCompatActivity() {
     }
     fun startTimeCounter(user: User){
         var counter = 0
-        object : CountDownTimer(65000,1000) {
+        object : CountDownTimer((startTime*1000).toLong(),1000) {
             override fun onTick(millisUntilFinished: Long) {
                 binding.timerView.text = counter.toString()
                 counter++
                 binding.stopTimerButton.setOnClickListener{
                     binding.timerView.text = "timer stopped"
-                    addScore(user, calculateScore(counter))//addScore(user, counter+1)
+                    addScore(user, calculateScoreTime(counter))//addScore(user, counter+1)
                     cancel()
                 }
             }
