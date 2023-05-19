@@ -17,30 +17,49 @@
             android:id="@+id/userNameText"
             android:layout_width="165dp"
             android:layout_height="42dp"
-            android:text="TextView" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="147dp"
+            android:layout_marginBottom="502dp"
+            android:text="TextView"
+            android:textSize="30sp"
+            android:textColor="#FF0000" />
 
         <TextView
             android:id="@+id/amountOfGamesPlayedText"
             android:layout_width="244dp"
             android:layout_height="69dp"
-            android:text="TextView" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="116dp"
+            android:layout_marginBottom="386dp"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/distanceCoverdText"
             android:layout_width="244dp"
             android:layout_height="69dp"
-            android:text="TextView" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="121dp"
+            android:layout_marginBottom="292dp"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF" />
+
         <TextView
             android:id="@+id/timeSpentTravelingText"
             android:layout_width="244dp"
             android:layout_height="69dp"
-            android:text="TextView" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="120dp"
+            android:layout_marginBottom="194dp"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/totalScoreText"
@@ -50,7 +69,9 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="124dp"
             android:layout_marginBottom="101dp"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 

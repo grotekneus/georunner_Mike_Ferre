@@ -3,6 +3,7 @@ package com.example.georunner
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityCreateAccountBinding
 import com.example.georunner.room.User
 import com.example.georunner.room.UserRoomRepository
@@ -26,7 +27,7 @@ class CreateAccountActivity : AppCompatActivity() {
         //val userDatabase = UserDatabase.getDatabase(applicationContext)
         //val userRoomRepository = UserRoomRepository(applicationContext)
 
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
 
@@ -45,23 +46,25 @@ class CreateAccountActivity : AppCompatActivity() {
             }
 
             else {
-                createAccount()
-                val intent = Intent(this, HomeActivity::class.java)
+                val user=createAccount()
+                val intent = Intent(this,HomeActivity::class.java)
+                intent.putExtra("USER_OBJECT", user)
                 startActivity(intent)
             }
         }
 
     }
 
-    private fun createAccount(){
+    private fun createAccount(): User {
         val userName=binding.newUsernameTxt.text.toString()
         val password=binding.enterPasswordTxt.text.toString()
 
         val user=User(password,userName,0)
 
-        GlobalScope.launch(Dispatchers.IO){
+        lifecycleScope.launch(Dispatchers.IO){
             userRoomRepository.userDao.insert(user)
         }
+        return user
         //Snackbar.make(binding.root, "WEEE fucking did it", Snackbar.LENGTH_LONG).setAction("Action", null).show()
     }
 

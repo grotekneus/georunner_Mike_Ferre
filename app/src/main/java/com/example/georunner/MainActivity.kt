@@ -10,6 +10,7 @@ import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
 //<<<<<<< HEAD
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.example.georunner.room.User
 import com.example.georunner.room.UserDatabase
 import com.example.georunner.room.UserRoomRepository
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         //main = activity as MainActivity
 
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
 
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         val userDao = userRoomRepository.userDao
         val username = binding.userNameTxt.text.toString()
         var password = binding.loginPassword.text.toString()
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             val user = userDao.getUserByUsername(username)
             if(user.password==password){
                 login(user)

@@ -18,9 +18,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+
 
 
 class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.LocationListener {
@@ -31,6 +34,11 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
     private lateinit var locationManager: LocationManager
     lateinit var currentlocation : Location
     private lateinit var userRoomRepository: UserRoomRepository
+    private lateinit var user: User
+
+    private var timeSpentSeconds: Int = 0
+    private var timeSpentMinutes: Int = 0
+    private var timeSpentHours: Int=0
 
 
     @Override
@@ -38,8 +46,8 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
         super.onCreate(savedInstanceState)
 
 
-        val user = intent.getSerializableExtra("USER_OBJECT") as User
-        GlobalScope.launch(Dispatchers.IO) {
+        user = intent.getSerializableExtra("USER_OBJECT") as User
+        lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
 
@@ -58,6 +66,53 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
         mapFragment?.getMapAsync(this)
 
     }
+    fun getUser(): User {
+        return user
+    }
+
+    fun increaseScoreBy10(){
+        lifecycleScope.launch(Dispatchers.IO) {
+            user.score += 10
+            user.distanceCovered
+            userRoomRepository.userDao.updateUser(user)
+        }
+        Snackbar.make(binding.root, "score is"+user.score, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+
+    }
+
+    fun getDistance(){
+
+    }
+
+    fun addDistanceToUser(){
+
+    }
+    fun setTimeSpent(seconds:Int,minuts:Int,hours:Int){
+        timeSpentSeconds=seconds
+        timeSpentMinutes=minuts
+        timeSpentHours=hours
+    }
+
+    fun addTimeSpentToUser(){
+        lifecycleScope.launch(Dispatchers.IO) {
+            user.timeSpentRunning+=timeSpentSeconds
+            userRoomRepository.userDao.updateUser(user)
+        }
+    }
+
+    fun calculateScore(){
+
+    }
+
+    fun increaseAmountOfGamesPlayed(){
+
+    }
+
+
+
+
+
+
 
 
     override fun onMapReady(googleMap: GoogleMap) {
