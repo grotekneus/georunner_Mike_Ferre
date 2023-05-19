@@ -18,7 +18,7 @@ class MikeActivity : AppCompatActivity() {
     private lateinit var userRoomRepository: UserRoomRepository
 
     private var startTime: Int = 0
-,   private var startDistance: Int = 0
+    private var startDistance: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,10 +62,6 @@ class MikeActivity : AppCompatActivity() {
     fun setStartDistance(startDistance: Int){
         this.startDistance=startDistance
     }
-
-    fun
-
-
     fun calculateScoreTime(time:Int): Int {
         var score = 0
         score = time*2

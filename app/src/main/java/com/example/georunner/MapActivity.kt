@@ -10,12 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.georunner.databinding.ActivityMapBinding
+import com.example.georunner.room.User
+import com.example.georunner.room.UserRoomRepository
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.LocationListener {
@@ -25,11 +30,19 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
     private lateinit var mapFragment : SupportMapFragment
     private lateinit var locationManager: LocationManager
     lateinit var currentlocation : Location
+    private lateinit var userRoomRepository: UserRoomRepository
 
 
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val user = intent.getSerializableExtra("USER_OBJECT") as User
+        GlobalScope.launch(Dispatchers.IO) {
+            userRoomRepository = UserRoomRepository(applicationContext)
+        }
+
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val sFrag = SearchFragment(this)

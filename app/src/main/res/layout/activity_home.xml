@@ -5,19 +5,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout"
+    android:background="#4CAF50"
     tools:context=".HomeActivity">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frmTodoContainer" >
 
         <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="this is home" />
-    </FrameLayout>
+            android:id="@+id/userNameText"
+            android:layout_width="165dp"
+            android:layout_height="42dp"
+            android:text="TextView" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/amountOfGamesPlayedText"
+            android:layout_width="244dp"
+            android:layout_height="69dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/distanceCoverdText"
+            android:layout_width="244dp"
+            android:layout_height="69dp"
+            android:text="TextView" />
+        <TextView
+            android:id="@+id/timeSpentTravelingText"
+            android:layout_width="244dp"
+            android:layout_height="69dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/totalScoreText"
+            android:layout_width="244dp"
+            android:layout_height="69dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="124dp"
+            android:layout_marginBottom="101dp"
+            android:text="TextView" />
+
+    </RelativeLayout>
+
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"

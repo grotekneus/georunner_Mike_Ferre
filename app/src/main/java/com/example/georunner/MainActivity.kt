@@ -80,7 +80,6 @@ class MainActivity : AppCompatActivity() {
             else{
                 return@launch
             }
-            // use the user object as needed
         }
 
         //Snackbar.make(binding.root, "login werkt", Snackbar.LENGTH_LONG).setAction("Action", null).show()
@@ -89,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun login(user: User){
-        val intent = Intent(this,MapActivity::class.java)
+        val intent = Intent(this,HomeActivity::class.java)
         intent.putExtra("USER_OBJECT", user)
         startActivity(intent)
     }
