@@ -1,16 +1,20 @@
 package com.example.georunner
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.fragment.app.Fragment
+import com.example.georunner.databinding.ActivityMapBinding
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import java.lang.Math.*
 
-class SearchFragment(var mapActivity: MapActivity) : Fragment() {
+class SearchFragment() : Fragment() {
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -18,8 +22,11 @@ class SearchFragment(var mapActivity: MapActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val button = view.findViewById<Button>(R.id.btnSearch)
         button.setOnClickListener {
-            val latlng = getRandomLocation(mapActivity)
-            mapActivity.placeMarker(latlng)
+            val latlng = getRandomLocation((activity as MapActivity))
+            (activity as MapActivity).placeMarker(latlng)
+            (activity as MapActivity).isRunning = true
+            (activity as MapActivity).drawLine()
+
             val newfragment = InfoFragment()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.search_container, newfragment)
@@ -31,6 +38,9 @@ class SearchFragment(var mapActivity: MapActivity) : Fragment() {
     }
 
     fun getRandomLocation(mapActivity: MapActivity): LatLng {
+        if(mapActivity.currentlocation== null){
+            return LatLng(0.0, 0.0)
+        }
         mapActivity.currentlocation
 
 
