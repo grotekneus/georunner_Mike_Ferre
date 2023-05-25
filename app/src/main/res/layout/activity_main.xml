@@ -51,7 +51,7 @@
 
     <EditText
         android:id="@+id/loginPassword"
-        android:contentDescription="Enter Your Username"
+        android:hint="Password"
         android:layout_width="233dp"
         android:layout_height="53dp"
         android:ems="10"

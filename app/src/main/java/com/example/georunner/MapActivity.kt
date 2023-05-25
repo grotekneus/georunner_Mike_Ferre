@@ -39,6 +39,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
     private var timeSpentSeconds: Int = 0
     private var timeSpentMinutes: Int = 0
     private var timeSpentHours: Int=0
+    private var distance: Int = 0
 
 
     @Override
@@ -80,12 +81,15 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
 
     }
 
-    fun getDistance(){
-
+    fun getDistance(distance:Int){
+        this.distance=distance
     }
 
     fun addDistanceToUser(){
-
+        lifecycleScope.launch(Dispatchers.IO){
+            user.distanceCovered+=distance
+            userRoomRepository.userDao.updateUser(user)
+        }
     }
     fun setTimeSpent(seconds:Int,minuts:Int,hours:Int){
         timeSpentSeconds=seconds
@@ -95,17 +99,36 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
 
     fun addTimeSpentToUser(){
         lifecycleScope.launch(Dispatchers.IO) {
-            user.timeSpentRunning+=timeSpentSeconds
+            user.timeSpentRunningSeconds+=timeSpentSeconds
+            if(user.timeSpentRunningSeconds>=60){
+                user.timeSpentRunningSeconds-=user.timeSpentRunningSeconds-60
+                user.timeSpentRunningMinutes++
+            }
+            user.timeSpentRunningMinutes+=timeSpentMinutes
+            if(user.timeSpentRunningMinutes>=60){
+                user.timeSpentRunningMinutes-=user.timeSpentRunningMinutes-60
+                user.timeSpentRunningHours++
+            }
+            user.timeSpentRunningHours+=timeSpentHours
             userRoomRepository.userDao.updateUser(user)
         }
     }
 
-    fun calculateScore(){
+    fun calculateScore(): Int {
+        return (((distance+1)%10)%(timeSpentMinutes+1))+1
+    }
 
+    fun addScoreToUser(score :Int){
+        lifecycleScope.launch(Dispatchers.IO){
+            user.score+=score
+        }
     }
 
     fun increaseAmountOfGamesPlayed(){
-
+        lifecycleScope.launch(Dispatchers.IO){
+            user.gamesPlayed++
+            userRoomRepository.userDao.updateUser(user)
+        }
     }
 
 

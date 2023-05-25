@@ -71,21 +71,34 @@ class InfoFragment : Fragment() {
     fun startTimer(){
         var seconds:Int =0
         var minuts: Int=0
+        var hours: Int =0
         var timerView = view?.findViewById<TextView>(R.id.timerView)
+        var startButton = view?.findViewById<Button>(R.id.startTimerButton)
+
         handler.post(object : Runnable {
                 override fun run() {
                     if (timerIsRunning) {
+                        startButton?.text="stop"
                         seconds++
                         if(seconds==60){
                             minuts++
+                            if(minuts==60){
+                                minuts=0
+                                hours++
+                            }
                             seconds=0
                         }
-                        timerView?.text = minuts.toString()+":"+seconds.toString()
+                        timerView?.text = hours.toString()+":"+minuts.toString()+":"+seconds.toString()
                         handler.postDelayed(this, 1000)
                     }
                     else{
-                        (activity as MapActivity).setTimeSpent(seconds,minuts,0)
+                        (activity as MapActivity).setTimeSpent(seconds,minuts,hours)
                         (activity as MapActivity).addTimeSpentToUser()
+                        startButton?.text="start"
+                        (activity as MapActivity).increaseAmountOfGamesPlayed()
+                        (activity as MapActivity).getDistance(10)/////voor nu kies 10
+                        (activity as MapActivity).addDistanceToUser()
+                        (activity as MapActivity).addScoreToUser((activity as MapActivity).calculateScore())
                     }
                 }
         })

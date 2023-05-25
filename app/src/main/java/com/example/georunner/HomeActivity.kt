@@ -33,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
 
         binding.totalScoreText.text="total accumulated score: "+ user.score.toString()
         binding.userNameText.text=user.userName
-        binding.timeSpentTravelingText.text= "time spent traveling with the app: "+user.timeSpentRunning.toString()
+        binding.timeSpentTravelingText.text= "time spent traveling with the app: "+user.timeSpentRunningHours.toString()+":"+user.timeSpentRunningMinutes+":"+user.timeSpentRunningSeconds
         binding.amountOfGamesPlayedText.text="amount of games played: "+user.gamesPlayed.toString()
         binding.distanceCoverdText.text="distance traveled with the app: "+user.distanceCovered.toString()
 
