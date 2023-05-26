@@ -20,6 +20,7 @@
         <activity android:name =".HomeActivity" android:exported = "true" />
         <activity android:name =".CreateAccountActivity" android:exported = "true" />
         <activity android:name =".MikeActivity" android:exported = "true" />
+        <activity android:name =".RecyclerViewActivity" android:exported = "true" />
 
         <activity
             android:name=".MainActivity"

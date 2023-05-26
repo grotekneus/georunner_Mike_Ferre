@@ -99,6 +99,7 @@ class InfoFragment : Fragment() {
                         (activity as MapActivity).getDistance(10)/////voor nu kies 10
                         (activity as MapActivity).addDistanceToUser()
                         (activity as MapActivity).addScoreToUser((activity as MapActivity).calculateScore())
+                        (activity as MapActivity).addActivity()
                     }
                 }
         })
