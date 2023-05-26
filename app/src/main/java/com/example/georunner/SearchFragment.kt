@@ -25,7 +25,7 @@ class SearchFragment() : Fragment() {
             val latlng = getRandomLocation((activity as MapActivity))
             (activity as MapActivity).placeMarker(latlng)
             (activity as MapActivity).isRunning = true
-            (activity as MapActivity).drawLine()
+
 
             val newfragment = InfoFragment()
             requireActivity().supportFragmentManager.beginTransaction()

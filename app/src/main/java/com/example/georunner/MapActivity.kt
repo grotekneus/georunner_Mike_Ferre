@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityMapBinding
 import com.example.georunner.room.User
 import com.example.georunner.room.UserRoomRepository
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,12 +25,15 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.location.LocationResult
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.pow
+import kotlin.math.round
 
 
-class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.LocationListener {
+class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gms.location.LocationListener {
     private lateinit var binding: ActivityMapBinding
     private lateinit var map: GoogleMap
     private val REQUEST_LOCATION_PERMISSION = 1
@@ -37,12 +42,14 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
     lateinit var currentlocation : Location
     private lateinit var userRoomRepository: UserRoomRepository
     private lateinit var user: User
-
     private var timeSpentSeconds: Int = 0
     private var timeSpentMinutes: Int = 0
     private var timeSpentHours: Int=0
     private var polyline: Polyline? = null
     var isRunning = false
+    private var distance: Int = 0
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +63,12 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+
+
+        //locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         // Request location updates
 
 
@@ -68,6 +80,8 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
         mapFragment?.getMapAsync(this)
 
     }
+
+
 
     fun getUser(): User {
         return user
@@ -83,12 +97,15 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
 
     }
 
-    fun getDistance(){
-
+    fun getDistance(distance:Int){
+        this.distance=distance
     }
 
     fun addDistanceToUser(){
-
+        lifecycleScope.launch(Dispatchers.IO){
+            user.distanceCovered+=distance
+            userRoomRepository.userDao.updateUser(user)
+        }
     }
     fun setTimeSpent(seconds:Int,minuts:Int,hours:Int){
         timeSpentSeconds=seconds
@@ -98,17 +115,36 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
 
     fun addTimeSpentToUser(){
         lifecycleScope.launch(Dispatchers.IO) {
-            user.timeSpentRunning+=timeSpentSeconds
+            user.timeSpentRunningSeconds+=timeSpentSeconds
+            if(user.timeSpentRunningSeconds>=60){
+                user.timeSpentRunningSeconds-=user.timeSpentRunningSeconds-60
+                user.timeSpentRunningMinutes++
+            }
+            user.timeSpentRunningMinutes+=timeSpentMinutes
+            if(user.timeSpentRunningMinutes>=60){
+                user.timeSpentRunningMinutes-=user.timeSpentRunningMinutes-60
+                user.timeSpentRunningHours++
+            }
+            user.timeSpentRunningHours+=timeSpentHours
             userRoomRepository.userDao.updateUser(user)
         }
     }
 
-    fun calculateScore(){
+    fun calculateScore(): Int {
+        return (((distance+1)%10)%(timeSpentMinutes+1))+1
+    }
 
+    fun addScoreToUser(score :Int){
+        lifecycleScope.launch(Dispatchers.IO){
+            user.score+=score
+        }
     }
 
     fun increaseAmountOfGamesPlayed(){
-
+        lifecycleScope.launch(Dispatchers.IO){
+            user.gamesPlayed++
+            userRoomRepository.userDao.updateUser(user)
+        }
     }
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
@@ -121,7 +157,16 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
                 == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             map.isMyLocationEnabled = true
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0f, this)
+            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0f, this)
+            val locationRequest = LocationRequest.create().apply {
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                interval = 1000 // Update interval in milliseconds
+            }
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                this,
+                Looper.getMainLooper() // Use the main thread looper to receive updates on the main thread
+            )
             //currentlocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
         } else {
             ActivityCompat.requestPermissions(
@@ -159,33 +204,23 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
-    /*fun startRouteDrawing() {
-        val backgroundThread = Thread {
-        }
-        backgroundThread.start()
-    }*/
+
+
     fun drawLine() {
         val backgroundThread = Thread {
             while (isRunning) {
-                // Perform your background task here
-                    // Create a new point using thecurrent location
                 val newPoint = LatLng(currentlocation.latitude, currentlocation.longitude)
-
-                    // Execute the UI-related code on the main thread
                 runOnUiThread {
+
                     if(polyline!= null) {
                         Snackbar.make(binding.root, polyline?.points?.get(polyline!!.points.lastIndex).toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                        //Log.i("thread", polyline?.points?.get(polyline!!.points.lastIndex).toString())
                     }
                     val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
                     if (polyline != null) {
-                        // Remove the existing polyline
                         polyline!!.remove()
                     }
-                    // Add the new point to the existing polyline or create a new one
 
                     points.add(newPoint)
-                    // Create a newpolyline with the updated points
                     val polylineOptions = PolylineOptions()
                         .addAll(points)
                         .color(Color.RED)
@@ -193,7 +228,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
                     polyline = map.addPolyline(polylineOptions)
                 }
                 try {
-                    Thread.sleep(2000) // Adjust the sleep duration as needed
+                    Thread.sleep(2000)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
@@ -202,16 +237,44 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,android.location.Loca
         backgroundThread.start()
     }
 
+
+    fun calculateTotalDistance(): Double {
+        var totalDistance = 0.0
+        val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
+        if(points != null && points .size > 2) {
+            for (i in 0 until points.size - 1) {
+                val startLatLng = points[i]
+                val endLatLng = points[i + 1]
+
+                val startLat = Math.toRadians(startLatLng.latitude)
+                val startLng = Math.toRadians(startLatLng.longitude)
+                val endLat = Math.toRadians(endLatLng.latitude)
+                val endLng = Math.toRadians(endLatLng.longitude)
+
+                val dLat = endLat - startLat
+                val dLng = endLng - startLng
+
+                val a =
+                    Math.sin(dLat / 2).pow(2) + Math.cos(startLat) * Math.cos(endLat) * Math.sin(
+                        dLng / 2
+                    ).pow(2)
+                val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+                val earthRadius = 6371
+                val distance = earthRadius * c
+
+                totalDistance += distance
+            }
+        }
+
+        return round(totalDistance*1000)
+    }
     override fun onLocationChanged(location: Location) {
-        //snackbar.make(binding.root, "location changed", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        //Snackbar.make(binding.root, location.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
         currentlocation = location
 
     }
 
-    override fun onProviderDisabled(provider: String) {}
 
-    override fun onProviderEnabled(provider: String) {}
-
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
 
 }

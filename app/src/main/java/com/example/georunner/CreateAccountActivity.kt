@@ -2,6 +2,7 @@ package com.example.georunner
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityCreateAccountBinding
@@ -24,6 +25,7 @@ class CreateAccountActivity : AppCompatActivity() {
 
         binding = ActivityCreateAccountBinding.inflate((layoutInflater))
         setContentView(binding.root)
+        //binding.enterPasswordTxt.text= Editable.Factory.getInstance().newEditable("enter password")//"enter password"
         //val userDatabase = UserDatabase.getDatabase(applicationContext)
         //val userRoomRepository = UserRoomRepository(applicationContext)
 

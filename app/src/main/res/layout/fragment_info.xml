@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/runDistance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Other Information"
@@ -15,7 +15,7 @@
         android:id="@+id/timerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewTitle"
+        android:layout_below="@id/runDistance"
         android:padding="16dp"
         android:text="This is some other random information that you can display on the screen." />
     <TextView
