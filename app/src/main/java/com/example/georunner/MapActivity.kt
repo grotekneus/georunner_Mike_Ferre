@@ -130,6 +130,16 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         }
     }
 
+    fun addActivity(){
+        lifecycleScope.launch(Dispatchers.IO) {
+            //val user = userRoomRepository.userDao.getUserByUsername(username)
+            val activityData = ActivityData(user.gamesPlayed, distance, timeSpentHours, timeSpentMinutes, timeSpentSeconds)
+            val updatedActivities = user.activities.toMutableList()
+            updatedActivities.add(activityData)
+            userRoomRepository.updateActivities(user.id, updatedActivities)
+        }
+    }
+
     fun calculateScore(): Int {
         return (((distance+1)%10)%(timeSpentMinutes+1))+1
     }

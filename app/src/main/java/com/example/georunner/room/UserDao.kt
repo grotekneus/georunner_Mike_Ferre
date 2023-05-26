@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.georunner.ActivityData
 
 @Dao
 interface UserDao {
@@ -28,6 +29,9 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE username = :username")
     fun getUserByUsername(username: String): User
+
+    @Query("UPDATE User SET activities = :activities WHERE id = :userId")
+    fun updateActivities(userId: Int, activities: List<ActivityData>)
 
 
 }
