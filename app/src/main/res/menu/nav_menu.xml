@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/HomeScreen"
+        android:icon="@drawable/house"
+        android:title="Home"/>
+    <item
         android:id="@+id/viewMap"
+        android:icon="@drawable/baseline_map_24"
         android:title="view the map"/>
+    <item
+        android:id="@+id/runHistory"
+        android:icon="@drawable/runningman"
+        android:title="run history"/>
 </menu>

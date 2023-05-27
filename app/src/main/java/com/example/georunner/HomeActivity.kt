@@ -2,16 +2,17 @@ package com.example.georunner
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityHomeBinding
 import com.example.georunner.room.User
 import com.example.georunner.room.UserRoomRepository
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -53,15 +54,22 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.viewMap -> switchToMap(user)
+                R.id.viewMap -> switchToMap(user, "mapActivity")
+                R.id.runHistory -> switchToMap(user, "recyclerview")
             }
             true
         }
     }
-    private fun switchToMap(user: User){
-        val intent = Intent(this, MapActivity::class.java)
-        intent.putExtra("USER_OBJECT", user)
-        startActivity(intent)
-
+    private fun switchToMap(user: User, a : String){
+        if(a == "mapActivity"){
+            val intent = Intent(this, MapActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
+        else if(a == "recyclerview"){
+            val intent = Intent(this, RecyclerViewActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.georunner
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -9,6 +10,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -44,6 +46,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     private var timeSpentSeconds: Int = 0
     private var timeSpentMinutes: Int = 0
     private var timeSpentHours: Int=0
+    private lateinit var menuBarToggle: ActionBarDrawerToggle
     private var polyline: Polyline? = null
     var isRunning = false
     private var distance: Int = 0
@@ -70,7 +73,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         }
         mapFragment = supportFragmentManager.findFragmentById(R.id.maps) as SupportMapFragment
         mapFragment?.getMapAsync(this)
-
+        setupMenuDrawer(user)
     }
 
 
@@ -279,7 +282,30 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     }
     override fun onLocationChanged(location: Location) {
         currentlocation = location
-
-
+    }
+    private fun setupMenuDrawer(user: User) {
+        menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayoutMap, R.string.menu_open, R.string.menu_close)
+        binding.drawerLayoutMap.addDrawerListener(menuBarToggle)
+        menuBarToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.navViewMap.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.HomeScreen -> switchToMap(user, "home")
+                R.id.runHistory -> switchToMap(user, "recyclerview")
+            }
+            true
+        }
+    }
+    private fun switchToMap(user: User, a : String){
+        if(a == "home"){
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
+        else if(a == "recyclerview"){
+            val intent = Intent(this, RecyclerViewActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
     }
 }
