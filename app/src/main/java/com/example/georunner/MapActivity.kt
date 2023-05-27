@@ -38,7 +38,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     private lateinit var map: GoogleMap
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var mapFragment : SupportMapFragment
-    private lateinit var locationManager: LocationManager
     lateinit var currentlocation : Location
     private lateinit var userRoomRepository: UserRoomRepository
     private lateinit var user: User
@@ -49,7 +48,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     var isRunning = false
     private var distance: Int = 0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
+    lateinit var currentGoal : LatLng
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +63,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         setContentView(binding.root)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-
-
-
-        //locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        // Request location updates
-
 
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.search_container, sFrag)
@@ -190,6 +182,9 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
 
         }
     }
+    fun clearMap(){
+        map.clear()
+    }
     fun placeMarker(latLng: LatLng){
         if(LatLng(0.0, 0.0) == latLng){
             Snackbar.make(binding.root, "location not initialised", Snackbar.LENGTH_LONG).setAction("Action", null).show()
@@ -200,6 +195,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
                     .position(latLng)
                     .title("Destination")
             )
+            currentGoal = latLng
             map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
@@ -214,7 +210,12 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
-
+    fun hasReachedGoal(): Boolean {
+        val distanceResults = FloatArray(1)
+        Location.distanceBetween(currentGoal.latitude,currentGoal.longitude,currentlocation.latitude,currentlocation.longitude,distanceResults)
+        Snackbar.make(binding.root, distanceResults[0].toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        return distanceResults[0] <= 15
+    }
 
     fun drawLine() {
         val backgroundThread = Thread {
@@ -222,9 +223,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
                 val newPoint = LatLng(currentlocation.latitude, currentlocation.longitude)
                 runOnUiThread {
 
-                    if(polyline!= null) {
-                        Snackbar.make(binding.root, polyline?.points?.get(polyline!!.points.lastIndex).toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                    }
                     val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
                     if (polyline != null) {
                         polyline!!.remove()
@@ -238,7 +236,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
                     polyline = map.addPolyline(polylineOptions)
                 }
                 try {
-                    Thread.sleep(2000)
+                    Thread.sleep(1000)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
@@ -280,11 +278,8 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         return round(totalDistance*1000)
     }
     override fun onLocationChanged(location: Location) {
-        //Snackbar.make(binding.root, location.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
         currentlocation = location
 
+
     }
-
-
-
 }

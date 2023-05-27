@@ -7,6 +7,7 @@
         android:id="@+id/runDistance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/startTimerButton"
         android:text="Other Information"
         android:gravity="center"
         android:textSize="20sp" />

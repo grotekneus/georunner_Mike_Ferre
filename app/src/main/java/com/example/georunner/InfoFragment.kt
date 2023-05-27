@@ -72,6 +72,10 @@ class InfoFragment : Fragment() {
 
         handler.post(object : Runnable {
                 override fun run() {
+                    if((activity as MapActivity).hasReachedGoal()){
+                        timerIsRunning == false
+
+                    }
                     if (timerIsRunning) {
                         distance = (activity as MapActivity).calculateTotalDistance()
                         startButton?.text="stop"
@@ -85,10 +89,7 @@ class InfoFragment : Fragment() {
                             seconds=0
                         }
                         timerView?.text = hours.toString()+":"+minuts.toString()+":"+seconds.toString()
-                        runDistance?.text = "total distance ran:" + distance.toString()
-                        Snackbar.make(view!!, distance.toString(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show()
+                        runDistance?.text = "total distance ran:" + distance.toString() + " meters"
                         handler.postDelayed(this, 1000)
                     }
                     else{
@@ -96,10 +97,11 @@ class InfoFragment : Fragment() {
                         (activity as MapActivity).addTimeSpentToUser()
                         startButton?.text="start"
                         (activity as MapActivity).increaseAmountOfGamesPlayed()
-                        (activity as MapActivity).getDistance(10)/////voor nu kies 10
+                        (activity as MapActivity).getDistance(10)// kan nu gwn distance pakken
                         (activity as MapActivity).addDistanceToUser()
                         (activity as MapActivity).addScoreToUser((activity as MapActivity).calculateScore())
                         (activity as MapActivity).addActivity()
+                        (activity as MapActivity).clearMap()
                     }
                 }
         })
