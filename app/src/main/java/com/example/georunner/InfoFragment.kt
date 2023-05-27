@@ -72,9 +72,10 @@ class InfoFragment : Fragment() {
 
         handler.post(object : Runnable {
                 override fun run() {
-                    if((activity as MapActivity).hasReachedGoal()){
-                        timerIsRunning == false
-
+                    if((activity as MapActivity)!= null) {
+                        if ((activity as MapActivity).hasReachedGoal()) {
+                            timerIsRunning == false
+                        }
                     }
                     if (timerIsRunning) {
                         distance = (activity as MapActivity).calculateTotalDistance()
