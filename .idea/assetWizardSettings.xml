@@ -312,7 +312,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../AppData/Local/Android/Sdk/icons/material/materialicons/map/baseline_map_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../AppData/Local/Android/Sdk/icons/material/materialicons/wb_sunny/baseline_wb_sunny_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -322,7 +322,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_map_24" />
+                            <entry key="outputName" value="sun" />
                             <entry key="sourceFile" value="C:\Users\ferre\georunner" />
                           </map>
                         </option>

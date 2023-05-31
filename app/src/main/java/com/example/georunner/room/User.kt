@@ -16,7 +16,7 @@ data class User(
     @ColumnInfo(name = "timeSpentRunningMinutes", defaultValue = "0") var timeSpentRunningMinutes: Int = 0,
     @ColumnInfo(name = "timeSpentRunningHours", defaultValue = "0") var timeSpentRunningHours: Int = 0,
     @ColumnInfo(name = "distanceCovered", defaultValue = "0") var distanceCovered: Int = 0,
-    @ColumnInfo(name = "activities") val activities: List<ActivityData> = emptyList(),
+    @ColumnInfo(name = "activities") var activities: List<ActivityData> = emptyList(),
     @PrimaryKey(autoGenerate = true) var id: Int = 0) : java.io.Serializable
 
 class Converters {

@@ -32,17 +32,12 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupMenuDrawer(user)
 
-        binding.recycleTestButton.setOnClickListener(){
-            val intent = Intent(this,RecyclerViewActivity::class.java)
-            intent.putExtra("USER_OBJECT", user)
-            startActivity(intent)
-        }
 
         binding.totalScoreText.text="total accumulated score: "+ user.score.toString()
         binding.userNameText.text=user.userName
         binding.timeSpentTravelingText.text= "time spent traveling with the app: "+user.timeSpentRunningHours.toString()+":"+user.timeSpentRunningMinutes+":"+user.timeSpentRunningSeconds
         binding.amountOfGamesPlayedText.text="amount of games played: "+user.gamesPlayed.toString()
-        binding.distanceCoverdText.text= user.activities.getOrNull(2)?.distance.toString()//"distance traveled with the app: "+user.distanceCovered.toString()
+        binding.distanceCoverdText.text= "distance traveled with the app: "+user.distanceCovered.toString()
 
     }
 

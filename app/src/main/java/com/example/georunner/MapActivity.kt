@@ -1,15 +1,16 @@
 package com.example.georunner
 
 import android.Manifest
-import android.content.Context
+import com.example.georunner.R
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,14 +24,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URL
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -52,6 +53,13 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     private var distance: Int = 0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var currentGoal : LatLng
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.openweathermap.org/data/2.5/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val weatherService = retrofit.create(WeatherService::class.java)
+
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +83,56 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         mapFragment?.getMapAsync(this)
         setupMenuDrawer(user)
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.mymenu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // handle button activities
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id: Int = item.itemId
+        if (id == R.id.mybutton) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val weatherData =
+                    getWeatherData(currentlocation.latitude, currentlocation.longitude)
+                weatherData?.let { addWeatherOverlay(it) }
+            }
 
 
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
+
+    private suspend fun getWeatherData(lat: Double, lon: Double): WeatherData? {
+        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
+        val cityId = 2802743
+        val response = weatherService.getWeather(cityId, apiKey)
+
+        if (response.isSuccessful) {
+            Log.i("requestsssssssss",response.body().toString())
+            return response.body()
+        }
+        delay(1000)
+        return null
+    }
+    private fun addWeatherOverlay(weatherData: WeatherData){
+        val tileProvider = object : UrlTileProvider(256, 256) {
+            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
+
+                val tileUrl = "https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid=5f73f0db5f6f882baa0c902be50670fa" // Replace with your weather tile URL
+                return URL(tileUrl.replace("{x}", x.toString())
+                    .replace("{y}", y.toString())
+                    .replace("{zoom}", zoom.toString()))
+            }
+        }
+        runOnUiThread {
+            val overlayOptions = TileOverlayOptions().tileProvider(tileProvider)
+            map.addTileOverlay(overlayOptions)
+        }
+
+    }
     fun getUser(): User {
         return user
     }
@@ -92,7 +147,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
 
     }
 
-    fun getDistance(distance:Int){
+    fun setDistance(distance:Int){
         this.distance=distance
     }
 
@@ -131,7 +186,9 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
             val activityData = ActivityData(user.gamesPlayed, distance, timeSpentHours, timeSpentMinutes, timeSpentSeconds)
             val updatedActivities = user.activities.toMutableList()
             updatedActivities.add(activityData)
+            user.activities=updatedActivities
             userRoomRepository.updateActivities(user.id, updatedActivities)
+
         }
     }
 

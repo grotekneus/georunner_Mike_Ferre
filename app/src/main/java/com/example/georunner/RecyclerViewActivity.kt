@@ -34,7 +34,6 @@ class RecyclerViewActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
-        Snackbar.make(binding.root, "this password does not match previous password", Snackbar.LENGTH_LONG).setAction("Action", null).show()
         recyclerView = findViewById(R.id.recyclerView)
         activities = user.activities // Get the list of activities from the database or wherever you store it
 

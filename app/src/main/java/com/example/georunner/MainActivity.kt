@@ -62,11 +62,6 @@ class MainActivity : AppCompatActivity() {
         binding.sighnUpButton.setOnClickListener{
             createAccount()
         }
-
-        binding.MikeButton.setOnClickListener {
-            val intent = Intent(this,MikeActivity::class.java)
-            startActivity(intent)
-        }
     }
     private fun verifyPassword(){
 

@@ -81,10 +81,10 @@ class InfoFragment : Fragment() {
                         distance = (activity as MapActivity).calculateTotalDistance()
                         startButton?.text="stop"
                         seconds++
-                        if(seconds==60){
+                        if(seconds == 60){
                             minuts++
-                            if(minuts==60){
-                                minuts=0
+                            if(minuts == 60){
+                                minuts = 0
                                 hours++
                             }
                             seconds=0
@@ -98,11 +98,12 @@ class InfoFragment : Fragment() {
                         (activity as MapActivity).addTimeSpentToUser()
                         startButton?.text="start"
                         (activity as MapActivity).increaseAmountOfGamesPlayed()
-                        (activity as MapActivity).getDistance(10)// kan nu gwn distance pakken
+                        (activity as MapActivity).setDistance(distance.toInt())
                         (activity as MapActivity).addDistanceToUser()
                         (activity as MapActivity).addScoreToUser((activity as MapActivity).calculateScore())
                         (activity as MapActivity).addActivity()
                         (activity as MapActivity).clearMap()
+                        distance = 0.0
                     }
                 }
         })
@@ -110,14 +111,10 @@ class InfoFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        //timer?.cancel()
-        //timer = null
-        //(activity as MapActivity).
-
+        timer?.cancel()
+        timer = null
         timerIsRunning = false
-
     }
-
 }
 
 

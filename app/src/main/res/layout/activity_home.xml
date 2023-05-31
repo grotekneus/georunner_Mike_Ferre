@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout"
-    android:background="#4CAF50"
+    android:background="#FFFFFF"
     tools:context=".HomeActivity">
 
     <RelativeLayout
@@ -35,7 +35,7 @@
             android:layout_marginBottom="386dp"
             android:text="TextView"
             android:textSize="18sp"
-            android:textColor="#FFFFFF" />
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/distanceCoverdText"
@@ -47,7 +47,7 @@
             android:layout_marginBottom="292dp"
             android:text="TextView"
             android:textSize="18sp"
-            android:textColor="#FFFFFF" />
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/timeSpentTravelingText"
@@ -59,7 +59,7 @@
             android:layout_marginBottom="194dp"
             android:text="TextView"
             android:textSize="18sp"
-            android:textColor="#FFFFFF" />
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/totalScoreText"
@@ -71,21 +71,7 @@
             android:layout_marginBottom="101dp"
             android:text="TextView"
             android:textSize="18sp"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/recycleTestButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="213dp"
-            android:layout_marginTop="511dp"
-            android:layout_marginEnd="104dp"
-            android:layout_marginBottom="43dp"
-            android:text="Button" />
+            android:textColor="#000000" />
 
     </RelativeLayout>
 
