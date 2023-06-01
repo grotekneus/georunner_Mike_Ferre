@@ -38,6 +38,15 @@ import kotlin.math.round
 
 
 class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
+    ///room stuff////
+    private lateinit var userRoomRepository: UserRoomRepository
+    private lateinit var user: User
+    private var timeSpentSeconds: Int = 0
+    private var timeSpentMinutes: Int = 0
+    private var timeSpentHours: Int=0
+    private var distance: Int = 0
+
+    ///map stuf
     private lateinit var binding: ActivityMapBinding
     private lateinit var map: GoogleMap
     private var weather = false
@@ -45,17 +54,13 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var mapFragment : SupportMapFragment
     lateinit var currentlocation : Location
-    private lateinit var userRoomRepository: UserRoomRepository
-    private lateinit var user: User
-    private var timeSpentSeconds: Int = 0
-    private var timeSpentMinutes: Int = 0
-    private var timeSpentHours: Int=0
     private lateinit var menuBarToggle: ActionBarDrawerToggle
     private var polyline: Polyline? = null
     var isRunning = false
-    private var distance: Int = 0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var currentGoal : LatLng
+
+    ///weather stuff///
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/data/2.5/")
         .addConverterFactory(GsonConverterFactory.create())
@@ -63,11 +68,12 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
 
     private val weatherService = retrofit.create(WeatherService::class.java)
 
+
+
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sFrag = SearchFragment()
-
         user = intent.getSerializableExtra("USER_OBJECT") as User
         lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
@@ -77,18 +83,22 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         setContentView(binding.root)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.search_container, sFrag)
             commit()
         }
         mapFragment = supportFragmentManager.findFragmentById(R.id.maps) as SupportMapFragment
         mapFragment?.getMapAsync(this)
+
         setupMenuDrawer(user)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.mymenu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        checkPermissions()
     }
     private fun setupMenuDrawer(user: User) {
         menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayoutMap, R.string.menu_open, R.string.menu_close)
@@ -103,22 +113,19 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
             true
         }
     }
-
-    // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
         if (id == R.id.mybutton) {
             weather = weather != true
             if(weather == true) {
-
                 showOptionDialog()
-                /*lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.IO) {
                     while (true) {
                         val weatherData = getWeatherData()
                         Log.i("badab ome", "ran the thing")
                         delay(1000)
                     }
-                }*/
+                }
             }
             else{
                 Log.i("weatger", "added weather overlay")
@@ -129,16 +136,108 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         return super.onOptionsItemSelected(item)
     }
 
+    fun checkPermissions(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            map.isMyLocationEnabled = true
+            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0f, this)
+            val locationRequest = LocationRequest.create().apply {
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                interval = 1000 // Update interval in milliseconds
+            }
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                this,
+                Looper.getMainLooper() // Use the main thread looper to receive updates on the main thread
+            )
+            //currentlocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf<String>(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                REQUEST_LOCATION_PERMISSION
+            )
 
-    private suspend fun getWeatherData(): String? {
-        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
-        val cityId = 2802743
-        val response = weatherService.getWeather(cityId, apiKey)
-        Log.i("badab ome", response.body().toString())
-        if (response.isSuccessful) {
-            return response.body().toString()
         }
-        return null
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkPermissions()
+            } else {
+                // Permission denied
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+
+    fun drawLine() {
+        val backgroundThread = Thread {
+            while (isRunning) {
+                val newPoint = LatLng(currentlocation.latitude, currentlocation.longitude)
+                runOnUiThread {
+
+                    val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
+                    if (polyline != null) {
+                        polyline!!.remove()
+                    }
+
+                    points.add(newPoint)
+                    val polylineOptions = PolylineOptions()
+                        .addAll(points)
+                        .color(Color.RED)
+                        .width(5f)
+                    polyline = map.addPolyline(polylineOptions)
+                }
+                try {
+                    Thread.sleep(1000)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        backgroundThread.start()
+    }
+
+
+    fun calculateTotalDistance(): Double {
+        var totalDistance = 0.0
+        val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
+        if(points != null && points .size > 2) {
+            for (i in 0 until points.size - 1) {
+                val startLatLng = points[i]
+                val endLatLng = points[i + 1]
+
+                val startLat = Math.toRadians(startLatLng.latitude)
+                val startLng = Math.toRadians(startLatLng.longitude)
+                val endLat = Math.toRadians(endLatLng.latitude)
+                val endLng = Math.toRadians(endLatLng.longitude)
+
+                val dLat = endLat - startLat
+                val dLng = endLng - startLng
+
+                val a =
+                    Math.sin(dLat / 2).pow(2) + Math.cos(startLat) * Math.cos(endLat) * Math.sin(
+                        dLng / 2
+                    ).pow(2)
+                val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+                val earthRadius = 6371
+                val distance = earthRadius * c
+
+                totalDistance += distance
+            }
+        }
+
+        return round(totalDistance*1000)
     }
     fun showOptionDialog() {
         val options = arrayOf("rain", "clouds", "temp","wind")
@@ -170,30 +269,54 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         dialog.show()
     }
 
-
-    private fun addWeatherOverlay(layer : String) {
-        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
-        val layer = layer
-        val tileProvider = object : UrlTileProvider(256, 256) {
-            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
-                val tileUrl = "https://tile.openweathermap.org/map/$layer/$zoom/$x/$y.png?appid=$apiKey"
-                Log.i("weather","i am a failure")
-                return URL(tileUrl)
-            }
+    fun placeMarker(latLng: LatLng){
+        if(LatLng(0.0, 0.0) == latLng){
+            Snackbar.make(binding.root, "location not initialised", Snackbar.LENGTH_LONG).setAction("Action", null).show()
         }
-        runOnUiThread {
-            val overlayOptions = TileOverlayOptions().tileProvider(tileProvider)
-            tileOverlay = map.addTileOverlay(overlayOptions)
+        if(map != null) {
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title("Destination")
+            )
+            currentGoal = latLng
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
+
+    private fun switchToMap(user: User, a : String){
+        if(a == "home"){
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
+        else if(a == "recyclerview"){
+            val intent = Intent(this, RecyclerViewActivity::class.java)
+            intent.putExtra("USER_OBJECT", user)
+            startActivity(intent)
+        }
+    }
+    fun hasReachedGoal(): Boolean {
+        val distanceResults = FloatArray(1)
+        Location.distanceBetween(currentGoal.latitude,currentGoal.longitude,currentlocation.latitude,currentlocation.longitude,distanceResults)
+        return distanceResults[0] <= 15
+    }
+
+    fun clearMap(){
+        map.clear()
+    }
+
+    override fun onLocationChanged(location: Location) {
+        currentlocation = location
+    }
+
+
+
+
+    ////alles user/////
     fun getUser(): User {
         return user
     }
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        checkPermissions()
-    }
-
     fun increaseScoreBy10(){
         lifecycleScope.launch(Dispatchers.IO) {
             user.score += 10
@@ -266,142 +389,30 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         }
     }
 
-    fun checkPermissions(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            map.isMyLocationEnabled = true
-            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0f, this)
-            val locationRequest = LocationRequest.create().apply {
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                interval = 1000 // Update interval in milliseconds
-            }
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                this,
-                Looper.getMainLooper() // Use the main thread looper to receive updates on the main thread
-            )
-            //currentlocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                REQUEST_LOCATION_PERMISSION
-            )
-
+    ////weather stuff////
+    private suspend fun getWeatherData(): String? {
+        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
+        val cityId = 2802743
+        val response = weatherService.getWeather(cityId, apiKey)
+        Log.i("badab ome", response.body().toString())
+        if (response.isSuccessful) {
+            return response.body().toString()
         }
+        return null
     }
-    fun clearMap(){
-        map.clear()
-    }
-    fun placeMarker(latLng: LatLng){
-        if(LatLng(0.0, 0.0) == latLng){
-            Snackbar.make(binding.root, "location not initialised", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-        }
-        if(map != null) {
-            map.addMarker(
-                MarkerOptions()
-                    .position(latLng)
-                    .title("Destination")
-            )
-            currentGoal = latLng
-            map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-        }
-    }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkPermissions()
-            } else {
-                // Permission denied
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
-    }
-    fun hasReachedGoal(): Boolean {
-        val distanceResults = FloatArray(1)
-        Location.distanceBetween(currentGoal.latitude,currentGoal.longitude,currentlocation.latitude,currentlocation.longitude,distanceResults)
-        return distanceResults[0] <= 15
-    }
-
-    fun drawLine() {
-        val backgroundThread = Thread {
-            while (isRunning) {
-                val newPoint = LatLng(currentlocation.latitude, currentlocation.longitude)
-                runOnUiThread {
-
-                    val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
-                    if (polyline != null) {
-                        polyline!!.remove()
-                    }
-
-                    points.add(newPoint)
-                    val polylineOptions = PolylineOptions()
-                        .addAll(points)
-                        .color(Color.RED)
-                        .width(5f)
-                    polyline = map.addPolyline(polylineOptions)
-                }
-                try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
+    private fun addWeatherOverlay(layer : String) {
+        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
+        val layer = layer
+        val tileProvider = object : UrlTileProvider(256, 256) {
+            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
+                val tileUrl = "https://tile.openweathermap.org/map/$layer/$zoom/$x/$y.png?appid=$apiKey"
+                Log.i("weather","i am a failure")
+                return URL(tileUrl)
             }
         }
-        backgroundThread.start()
-    }
-
-
-    fun calculateTotalDistance(): Double {
-        var totalDistance = 0.0
-        val points: MutableList<LatLng> = polyline?.points?.toMutableList() ?: ArrayList()
-        if(points != null && points .size > 2) {
-            for (i in 0 until points.size - 1) {
-                val startLatLng = points[i]
-                val endLatLng = points[i + 1]
-
-                val startLat = Math.toRadians(startLatLng.latitude)
-                val startLng = Math.toRadians(startLatLng.longitude)
-                val endLat = Math.toRadians(endLatLng.latitude)
-                val endLng = Math.toRadians(endLatLng.longitude)
-
-                val dLat = endLat - startLat
-                val dLng = endLng - startLng
-
-                val a =
-                    Math.sin(dLat / 2).pow(2) + Math.cos(startLat) * Math.cos(endLat) * Math.sin(
-                        dLng / 2
-                    ).pow(2)
-                val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-
-                val earthRadius = 6371
-                val distance = earthRadius * c
-
-                totalDistance += distance
-            }
-        }
-
-        return round(totalDistance*1000)
-    }
-    override fun onLocationChanged(location: Location) {
-        currentlocation = location
-    }
-
-    private fun switchToMap(user: User, a : String){
-        if(a == "home"){
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.putExtra("USER_OBJECT", user)
-            startActivity(intent)
-        }
-        else if(a == "recyclerview"){
-            val intent = Intent(this, RecyclerViewActivity::class.java)
-            intent.putExtra("USER_OBJECT", user)
-            startActivity(intent)
+        runOnUiThread {
+            val overlayOptions = TileOverlayOptions().tileProvider(tileProvider)
+            tileOverlay = map.addTileOverlay(overlayOptions)
         }
     }
 }
