@@ -50,7 +50,6 @@ class InfoFragment : Fragment() {
                 startTimer()
                //val user= homeActivity.getUser
                 //val user = (activity as HomeActivity).getUser()
-                (activity as MapActivity).increaseScoreBy10()
 
             }
             else{

@@ -317,15 +317,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
     fun getUser(): User {
         return user
     }
-    fun increaseScoreBy10(){
-        lifecycleScope.launch(Dispatchers.IO) {
-            user.score += 10
-            user.distanceCovered
-            userRoomRepository.userDao.updateUser(user)
-        }
-        Snackbar.make(binding.root, "score is"+user.score, Snackbar.LENGTH_LONG).setAction("Action", null).show()
-
-    }
 
     fun setDistance(distance:Int){
         this.distance=distance
