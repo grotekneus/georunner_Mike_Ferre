@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import com.example.georunner.databinding.ActivityMapBinding
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
 import java.lang.Math.*
 
 class SearchFragment() : Fragment() {

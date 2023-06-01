@@ -19,11 +19,7 @@ abstract class UserDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): UserDatabase{
             val tempInstance = INSTANCE
-            //if(tempInstance != null){
-              //  return tempInstance
-            //}
             synchronized(this){
-                //context.deleteDatabase("user_database")
 
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -33,8 +29,6 @@ abstract class UserDatabase : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .build()
 
-                    //.fallbackToDestructiveMigration()
-                    //.build()
                 return instance
             }
         }

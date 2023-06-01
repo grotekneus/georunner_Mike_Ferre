@@ -1,24 +1,16 @@
 package com.example.georunner
 
 
-import android.view.MenuItem
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.ActionBarDrawerToggle
+
 import androidx.appcompat.app.AppCompatActivity
 import com.example.georunner.databinding.ActivityMainBinding
 import android.content.Intent
-//<<<<<<< HEAD
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.example.georunner.room.User
-import com.example.georunner.room.UserDatabase
 import com.example.georunner.room.UserRoomRepository
-//=======
-//>>>>>>> 5ad0be549439a389e9ceca6b3658c96ca1ca6b24
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -26,8 +18,6 @@ class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
     private lateinit var userRoomRepository: UserRoomRepository
-    //private lateinit var main: MainActivity
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -37,7 +27,6 @@ class MainActivity : AppCompatActivity() {
 
 
         setContentView(binding.root)
-        //main = activity as MainActivity
 
         lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
@@ -54,9 +43,6 @@ class MainActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
             verifyPassword()
-            //GlobalScope.launch(Dispatchers.IO){
-
-            //}
         }
 
         binding.sighnUpButton.setOnClickListener{
@@ -82,9 +68,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        //Snackbar.make(binding.root, "login werkt", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-        //val intent = Intent(this,HomeActivity::class.java)
-        //startActivity(intent)
     }
 
     private fun login(user: User){

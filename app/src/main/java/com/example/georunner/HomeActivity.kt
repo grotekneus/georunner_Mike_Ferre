@@ -2,10 +2,8 @@ package com.example.georunner
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityHomeBinding
 import com.example.georunner.room.User

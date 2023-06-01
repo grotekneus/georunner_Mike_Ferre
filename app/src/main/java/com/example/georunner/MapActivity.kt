@@ -1,7 +1,6 @@
 package com.example.georunner
 
 import android.Manifest
-import com.example.georunner.R
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -141,17 +140,15 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
                 == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             map.isMyLocationEnabled = true
-            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0f, this)
             val locationRequest = LocationRequest.create().apply {
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                interval = 1000 // Update interval in milliseconds
+                interval = 1000
             }
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
                 this,
-                Looper.getMainLooper() // Use the main thread looper to receive updates on the main thread
+                Looper.getMainLooper()
             )
-            //currentlocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -171,7 +168,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 checkPermissions()
             } else {
-                // Permission denied
+
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -381,7 +378,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
     }
 
     ////weather stuff////
-    private suspend fun getWeatherData(): String? {
+    suspend fun getWeatherData(): String? {
         val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
         val cityId = 2802743
         val response = weatherService.getWeather(cityId, apiKey)
@@ -391,7 +388,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
         }
         return null
     }
-    private fun addWeatherOverlay(layer : String) {
+    fun addWeatherOverlay(layer : String) {
         val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
         val layer = layer
         val tileProvider = object : UrlTileProvider(256, 256) {

@@ -8,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.georunner.databinding.ActivityHomeBinding
 import com.example.georunner.databinding.ActivityRecyclerViewBinding
 import com.example.georunner.room.User
 import com.example.georunner.room.UserRoomRepository
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -35,7 +33,7 @@ class RecyclerViewActivity : AppCompatActivity() {
             userRoomRepository = UserRoomRepository(applicationContext)
         }
         recyclerView = findViewById(R.id.recyclerView)
-        activities = user.activities // Get the list of activities from the database or wherever you store it
+        activities = user.activities
 
             activityDataAdapter = ActivityDataAdapter(activities)
         recyclerView.adapter = activityDataAdapter

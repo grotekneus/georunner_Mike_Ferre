@@ -2,7 +2,6 @@ package com.example.georunner
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.georunner.databinding.ActivityCreateAccountBinding
@@ -10,7 +9,6 @@ import com.example.georunner.room.User
 import com.example.georunner.room.UserRoomRepository
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -25,9 +23,6 @@ class CreateAccountActivity : AppCompatActivity() {
 
         binding = ActivityCreateAccountBinding.inflate((layoutInflater))
         setContentView(binding.root)
-        //binding.enterPasswordTxt.text= Editable.Factory.getInstance().newEditable("enter password")//"enter password"
-        //val userDatabase = UserDatabase.getDatabase(applicationContext)
-        //val userRoomRepository = UserRoomRepository(applicationContext)
 
         lifecycleScope.launch(Dispatchers.IO) {
             userRoomRepository = UserRoomRepository(applicationContext)
@@ -67,27 +62,7 @@ class CreateAccountActivity : AppCompatActivity() {
             userRoomRepository.userDao.insert(user)
         }
         return user
-        //Snackbar.make(binding.root, "WEEE fucking did it", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+
     }
 
-
-    /*
-     private fun insertDataToDatabase() {
-        val firstName = addFirstName_et.text.toString()
-        val lastName = addLastName_et.text.toString()
-        val age = addAge_et.text
-
-        if(inputCheck(firstName, lastName, age)){
-            // Create User Object
-            val user = User(0, firstName, lastName, Integer.parseInt(age.toString()))
-            // Add Data to Database
-            mUserViewModel.addUser(user)
-            Toast.makeText(requireContext(), "Successfully added!", Toast.LENGTH_LONG).show()
-            // Navigate Back
-            findNavController().navigate(R.id.action_addFragment_to_listFragment)
-        }else{
-            Toast.makeText(requireContext(), "Please fill out all fields.", Toast.LENGTH_LONG).show()
-        }
-    }
-     */
 }

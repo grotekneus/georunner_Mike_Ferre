@@ -19,39 +19,6 @@ class UserRoomRepository(appContext: Context){
         userDao.updateActivities(userId, activities)
     }
 
-    //fun getAllUsers(): List<User> {
-      //  return userDao.getAll()
-    //}
-
-    //fun insertUser(user: User) {
-      //  userDao.insert(user)
-    //}
 
 
 }
-
-/*
-class TodoRoomRepository(appContext: Context) : TodoRepository {
-
-    private val db: TodoDatabase
-    private val dao: TodoDao
-
-    init {
-        db = Room.databaseBuilder(appContext, TodoDatabase::class.java, "todo-db")
-            .allowMainThreadQueries()
-            .build()
-        dao = db.todoDao()
-    }
-
-    override fun load(): List<Todo> = dao.query()
-
-    override fun save(items: List<Todo>) {
-        // You'll learn more about transactions in the database course in the 3rd academic year.
-        db.runInTransaction {
-            dao.deleteAll()
-            dao.insert(items)
-        }
-    }
-
-}
- */
