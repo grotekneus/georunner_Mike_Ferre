@@ -69,13 +69,17 @@ class MainActivity : AppCompatActivity() {
         val username = binding.userNameTxt.text.toString()
         var password = binding.loginPassword.text.toString()
         lifecycleScope.launch(Dispatchers.IO) {
-            val user = userDao.getUserByUsername(username)
-            if(user.password==password){
-                login(user)
+            if(userDao.getUserByUsername(username) != null){
+                val user = userDao.getUserByUsername(username)
+
+                if(user.password==password){
+                    login(user)
+                }
+                else{
+                    return@launch
+                }
             }
-            else{
-                return@launch
-            }
+
         }
 
         //Snackbar.make(binding.root, "login werkt", Snackbar.LENGTH_LONG).setAction("Action", null).show()

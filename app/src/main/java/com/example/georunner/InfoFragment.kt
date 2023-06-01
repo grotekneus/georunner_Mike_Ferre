@@ -102,6 +102,7 @@ class InfoFragment : Fragment() {
                         (activity as MapActivity).addDistanceToUser()
                         (activity as MapActivity).addScoreToUser((activity as MapActivity).calculateScore())
                         (activity as MapActivity).addActivity()
+                        (activity as MapActivity).isRunning = false
                         (activity as MapActivity).clearMap()
                         distance = 0.0
                     }

@@ -36,16 +36,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:text="Start" />
-
-    <EditText
-        android:id="@+id/setTimeText"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginEnd="192dp"
-        android:ems="10"
-        android:inputType="number" />
 </RelativeLayout>

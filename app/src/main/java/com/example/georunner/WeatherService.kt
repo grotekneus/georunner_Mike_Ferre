@@ -1,4 +1,5 @@
 package com.example.georunner
+import com.google.gson.JsonElement
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -10,5 +11,5 @@ interface WeatherService {
         @Query("id") cityId: Int,
         @Query("appid") apiKey: String
 
-    ): Response<WeatherData>
+    ): Response<JsonElement>
 }

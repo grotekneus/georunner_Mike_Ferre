@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,9 +37,11 @@ import kotlin.math.pow
 import kotlin.math.round
 
 
-class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gms.location.LocationListener {
+class MapActivity : AppCompatActivity(),OnMapReadyCallback,LocationListener {
     private lateinit var binding: ActivityMapBinding
     private lateinit var map: GoogleMap
+    private var weather = false
+    private var tileOverlay: TileOverlay? = null
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var mapFragment : SupportMapFragment
     lateinit var currentlocation : Location
@@ -87,54 +90,108 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
         menuInflater.inflate(R.menu.mymenu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+    private fun setupMenuDrawer(user: User) {
+        menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayoutMap, R.string.menu_open, R.string.menu_close)
+        binding.drawerLayoutMap.addDrawerListener(menuBarToggle)
+        menuBarToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.navViewMap.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.HomeScreen -> switchToMap(user, "home")
+                R.id.runHistory -> switchToMap(user, "recyclerview")
+            }
+            true
+        }
+    }
 
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
         if (id == R.id.mybutton) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                val weatherData =
-                    getWeatherData(currentlocation.latitude, currentlocation.longitude)
-                weatherData?.let { addWeatherOverlay(it) }
+            weather = weather != true
+            if(weather == true) {
+
+                showOptionDialog()
+                /*lifecycleScope.launch(Dispatchers.IO) {
+                    while (true) {
+                        val weatherData = getWeatherData()
+                        Log.i("badab ome", "ran the thing")
+                        delay(1000)
+                    }
+                }*/
             }
-
-
+            else{
+                Log.i("weatger", "added weather overlay")
+                tileOverlay?.remove()
+            }
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
 
-    private suspend fun getWeatherData(lat: Double, lon: Double): WeatherData? {
+    private suspend fun getWeatherData(): String? {
         val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
         val cityId = 2802743
         val response = weatherService.getWeather(cityId, apiKey)
-
+        Log.i("badab ome", response.body().toString())
         if (response.isSuccessful) {
-            Log.i("requestsssssssss",response.body().toString())
-            return response.body()
+            return response.body().toString()
         }
-        delay(1000)
         return null
     }
-    private fun addWeatherOverlay(weatherData: WeatherData){
+    fun showOptionDialog() {
+        val options = arrayOf("rain", "clouds", "temp","wind")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Choose an option")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    addWeatherOverlay("precipitation_new")
+                }
+                1 -> {
+                    addWeatherOverlay("clouds_new")
+                }
+                2 -> {
+                    addWeatherOverlay("temp_new")
+                }
+                3 -> {
+                    addWeatherOverlay("wind_new")
+                }
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+
+    private fun addWeatherOverlay(layer : String) {
+        val apiKey = "5f73f0db5f6f882baa0c902be50670fa"
+        val layer = layer
         val tileProvider = object : UrlTileProvider(256, 256) {
             override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
-
-                val tileUrl = "https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid=5f73f0db5f6f882baa0c902be50670fa" // Replace with your weather tile URL
-                return URL(tileUrl.replace("{x}", x.toString())
-                    .replace("{y}", y.toString())
-                    .replace("{zoom}", zoom.toString()))
+                val tileUrl = "https://tile.openweathermap.org/map/$layer/$zoom/$x/$y.png?appid=$apiKey"
+                Log.i("weather","i am a failure")
+                return URL(tileUrl)
             }
         }
         runOnUiThread {
             val overlayOptions = TileOverlayOptions().tileProvider(tileProvider)
-            map.addTileOverlay(overlayOptions)
+            tileOverlay = map.addTileOverlay(overlayOptions)
         }
-
     }
     fun getUser(): User {
         return user
+    }
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        checkPermissions()
     }
 
     fun increaseScoreBy10(){
@@ -208,12 +265,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
             userRoomRepository.userDao.updateUser(user)
         }
     }
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        checkPermissions()
 
-
-    }
     fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED ||
@@ -273,7 +325,6 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     fun hasReachedGoal(): Boolean {
         val distanceResults = FloatArray(1)
         Location.distanceBetween(currentGoal.latitude,currentGoal.longitude,currentlocation.latitude,currentlocation.longitude,distanceResults)
-        Snackbar.make(binding.root, distanceResults[0].toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show()
         return distanceResults[0] <= 15
     }
 
@@ -340,19 +391,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,com.google.android.gm
     override fun onLocationChanged(location: Location) {
         currentlocation = location
     }
-    private fun setupMenuDrawer(user: User) {
-        menuBarToggle = ActionBarDrawerToggle(this,binding.drawerLayoutMap, R.string.menu_open, R.string.menu_close)
-        binding.drawerLayoutMap.addDrawerListener(menuBarToggle)
-        menuBarToggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.navViewMap.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.HomeScreen -> switchToMap(user, "home")
-                R.id.runHistory -> switchToMap(user, "recyclerview")
-            }
-            true
-        }
-    }
+
     private fun switchToMap(user: User, a : String){
         if(a == "home"){
             val intent = Intent(this, HomeActivity::class.java)
